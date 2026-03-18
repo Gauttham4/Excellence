@@ -5,8 +5,6 @@ const cors = require('cors');
 const multer = require('multer');
 const { google } = require('googleapis');
 const admin = require('firebase-admin');
-const fs = require('fs');
-const path = require('path');
 
 // Initialize Express
 const app = express();
@@ -16,24 +14,24 @@ const upload = multer({ storage: multer.memoryStorage() });
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-// Initialize Firebase Admin
-const serviceAccount = require('./serviceAccountKey.json');
+
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
+
 const db = admin.firestore();
 
-// OAuth2 Setup
-const CREDENTIALS_PATH = path.join(__dirname, 'oauth-credentials.json');
-const TOKEN_PATH = path.join(__dirname, 'token.json');
 
 let oAuth2Client;
 let drive;
 
-// Initialize OAuth2 Client
 try {
-  const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH));
-  const { client_secret, client_id, redirect_uris } = credentials.installed || credentials.web;
+  const credentials = JSON.parse(process.env.GOOGLE_OAUTH_CREDENTIALS);
+
+  const { client_secret, client_id, redirect_uris } =
+    credentials.installed || credentials.web;
 
   oAuth2Client = new google.auth.OAuth2(
     client_id,
@@ -41,17 +39,21 @@ try {
     redirect_uris[0]
   );
 
-  // Check if we have a token already
-  if (fs.existsSync(TOKEN_PATH)) {
-    const token = JSON.parse(fs.readFileSync(TOKEN_PATH));
+  if (process.env.GOOGLE_TOKEN) {
+    const token = JSON.parse(process.env.GOOGLE_TOKEN);
     oAuth2Client.setCredentials(token);
-    drive = google.drive({ version: 'v3', auth: oAuth2Client });
+
+    drive = google.drive({
+      version: 'v3',
+      auth: oAuth2Client,
+    });
+
     console.log('✓ OAuth2 authenticated successfully');
   } else {
-    console.log('⚠ No token found. Please authenticate using /api/get-auth-url');
+    console.log('⚠ No token found in ENV');
   }
 } catch (error) {
-  console.error('⚠ OAuth credentials not found. Please set up OAuth first.');
+  console.error('⚠ OAuth ENV not configured properly:', error);
 }
 
 // Google Drive folder IDs
@@ -131,8 +133,9 @@ app.get('/api/oauth-callback', async (req, res) => {
   try {
     const { tokens } = await oAuth2Client.getToken(code);
     oAuth2Client.setCredentials(tokens);
-    fs.writeFileSync(TOKEN_PATH, JSON.stringify(tokens));
-    
+    console.log('⚠ Save this token in your ENV as GOOGLE_TOKEN:');
+    console.log(JSON.stringify(tokens));    
+
     // Initialize drive after successful auth
     drive = google.drive({ version: 'v3', auth: oAuth2Client });
     
