@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: dhanoos-backend
+    runtime: node
+    plan: free
+    buildCommand: cd backend/backend && npm install
+    startCommand: cd backend/backend && npm start
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: FIREBASE_SERVICE_ACCOUNT
+        sync: false
+      - key: GOOGLE_OAUTH_CREDENTIALS
+        sync: false
+      - key: GOOGLE_TOKEN
+        sync: false
+      - key: DRIVE_10TH_FOLDER_ID
+        sync: false
+      - key: DRIVE_11TH_FOLDER_ID
+        sync: false
+      - key: DRIVE_12TH_FOLDER_ID
+        sync: false
