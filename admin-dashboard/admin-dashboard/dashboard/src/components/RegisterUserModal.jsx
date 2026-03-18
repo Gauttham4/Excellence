@@ -32,7 +32,7 @@ function RegisterUserModal({ adminData, onClose, onUserRegistered }) {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/admin/register', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

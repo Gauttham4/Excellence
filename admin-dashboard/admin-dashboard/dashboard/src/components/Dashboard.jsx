@@ -38,7 +38,7 @@ function Dashboard({ adminData, onLogout }) {
 
   const fetchAcademicYear = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/academic-year');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/academic-year`);
       const data = await response.json();
       if (data.success) {
         setAcademicYear(data.academicYear);
@@ -52,8 +52,8 @@ function Dashboard({ adminData, onLogout }) {
     setLoading(true);
     try {
       const endpoint = activeTab === 'all'
-        ? 'http://localhost:5000/api/pdfs/all'
-        : `http://localhost:5000/api/pdfs/${activeTab}`;
+        ? `${import.meta.env.VITE_API_URL}/api/pdfs/all`
+        : `${import.meta.env.VITE_API_URL}/api/pdfs/${activeTab}`;
 
       const response = await fetch(endpoint);
       const data = await response.json();

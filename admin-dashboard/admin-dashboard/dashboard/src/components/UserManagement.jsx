@@ -20,7 +20,7 @@ function UserManagement({ adminData }) {
     try {
       let admin_creds = localStorage.getItem('admin_data');
       console.log(admin_creds);
-      const response = await fetch('http://localhost:5000/api/admin/users', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users`, {
         headers: {
           'adminEmail': adminData.email,
         },
@@ -47,7 +47,7 @@ function UserManagement({ adminData }) {
 
     setDeleteLoading(userId);
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'adminEmail': adminData.email,

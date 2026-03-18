@@ -94,7 +94,7 @@ function AchievementsSection() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/top-performers')
+    fetch(`${import.meta.env.VITE_API_URL}/api/top-performers`)
       .then(r => r.json())
       .then(data => { if (data.success) setAllPerformers(data.performers); })
       .catch(() => {})
@@ -286,7 +286,7 @@ function RegistrationForm() {
   const [showSchoolDropdown, setShowSchoolDropdown] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/academic-year')
+    fetch(`${import.meta.env.VITE_API_URL}/api/academic-year`)
       .then(r => r.json())
       .then(d => { if (d.success && d.academicYear) setAcademicYear(d.academicYear); })
       .catch(() => {});
@@ -422,7 +422,7 @@ function RegistrationForm() {
     setIsSubmitting(true);
     try {
       const { pdfBlob, pdfBase64 } = generatePDF(formData, academicYear);
-      const response = await fetch('http://localhost:5000/api/submit-application', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/submit-application`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, pdfBase64 })

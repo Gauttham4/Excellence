@@ -135,7 +135,7 @@ function TopPerformers({ adminData }) {
   const fetchPerformers = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/top-performers');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/top-performers`);
       const data = await res.json();
       if (data.success) {
         const grouped = { '10th': [], '11th': [], '12th': [] };
@@ -181,7 +181,7 @@ function TopPerformers({ adminData }) {
           ? { science: formData.science.trim() }
           : { physics: formData.physics.trim(), chemistry: formData.chemistry.trim() }),
       };
-      const res = await fetch('http://localhost:5000/api/top-performers', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/top-performers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', adminemail: adminData?.email || '' },
         body: JSON.stringify(payload),
@@ -206,7 +206,7 @@ function TopPerformers({ adminData }) {
     if (!window.confirm('Delete this performer?')) return;
     setDeletingId(id);
     try {
-      const res = await fetch(`http://localhost:5000/api/top-performers/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/top-performers/${id}`, {
         method: 'DELETE',
         headers: { adminemail: adminData?.email || '' },
       });
